@@ -5,11 +5,13 @@ import { http } from '@/utils/request';
 const userStore = createSlice({
   name: 'user',
   // 数据状态 
-  initialState: { token: '', userInfo: {} },
+  initialState: { token: localStorage.getItem('token_key') || '', userInfo: {} },
   // 同步修改方法
   reducers: {
     setToken(state, action) { // 添加 setToken 方法
       state.token = action.payload;
+      //localStorage
+      localStorage.setItem('token_key',action.payload)
     },
   },
 });
