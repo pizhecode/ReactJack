@@ -1,14 +1,21 @@
 import './index.scss'
-import { Card, Form, Input, Button } from 'antd'
+import { Card, Form, Input, Button, message } from 'antd'
 import logo from '@/assets/logo.png'
+import { useDispatch } from 'react-redux';
+import { fetchLogin } from '@/store/modules/user';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const FormItem1 = 'mobile';//表单1名字
-  const FormItem2 = 'code';//表单2名字
+  const FormItem2 = 'code';//表单2名字  246810
   //点击登录完成
-  const onFinish = (values) => {
-    console.log(values);
-  };
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const onFinish = async formValue => {
+    await dispatch(fetchLogin(formValue))
+    navigate('/')
+    message.success('登录成功')
+  }
 
   return (
     <div className="login">
@@ -22,7 +29,7 @@ const Login = () => {
           </Form.Item>
           {/* 验证码 */}
           <Form.Item name={FormItem2} rules={[ { required: true, message: '请输入验证码' },]}>
-            <Input size="large" placeholder="请输入验证码" maxLength={6} />
+            <Input size="large" placeholder="请输入验证码" maxLength={6}/>
           </Form.Item>
           {/* 按钮 */}
           <Form.Item>
