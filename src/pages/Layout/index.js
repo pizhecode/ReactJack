@@ -3,7 +3,7 @@ import { useEffect } from "react"
 
 const Layout = () => {
   useEffect(()=>{
-    request.get('/user/profile')
+    request.get('/ping')
   },[])
   return <div>this is layout</div>
 }

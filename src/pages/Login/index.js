@@ -6,21 +6,25 @@ import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   //go
-  // const FormItem1 = 'username';//表单1名字
-  // const FormItem2 = 'password';//表单2名字 
+  const FormItem1 = 'username';//表单1名字
+  const FormItem2 = 'password';//表单2名字 
 
   //MA
-  const FormItem1 = 'mobile';//表单1名字 13800000002
-  const FormItem2 = 'code';//表单2名字   246810
+  // const FormItem1 = 'mobile';//表单1名字 13800000002
+  // const FormItem2 = 'code';//表单2名字   246810
 
   //点击登录完成
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const onFinish = async formValue => {
-    await dispatch(fetchLogin(formValue))
-    // navigate('/')
-    message.success('登录成功')
-  }
+  const onFinish = async loginForm => {
+    const result = await dispatch(fetchLogin(loginForm, '/login'));
+    if (result.success) {
+      message.success(result.msg);
+      navigate('/');
+    } else {
+      message.error(result.msg);
+    }
+  };
 
   return (
     <div className="login">
@@ -30,7 +34,8 @@ const Login = () => {
         {/* 登录表单 */}
         <Form validateTrigger={['onBlur']}  onFinish={onFinish}>
           {/* 手机号 */}
-          <Form.Item name={FormItem1} rules={[{ required: true, message: '请输入手机号' }, {pattern: /^1[3-9]\d{9}$/,message: '手机号码格式不对'}]}>
+          {/* , {pattern: /^1[3-9]\d{9}$/,message: '手机号码格式不对'} */}
+          <Form.Item name={FormItem1} rules={[{ required: true, message: '请输入手机号' }]}>
             <Input size="large" placeholder="请输入手机号" />
           </Form.Item>
           {/* 验证码 */}
