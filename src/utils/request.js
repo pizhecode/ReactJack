@@ -1,13 +1,21 @@
 import axios from 'axios'
+import { getToken } from './token'
 //axios的封装处理
 //1 根域名配置
 const request = axios.create({
   baseURL: 'http://geek.itheima.net/v1_0',
+  // baseURL: 'http://localhost:8084',
   timeout: 5000
 })
 
 // 添加请求拦截器
 request.interceptors.request.use((config)=> {
+    //操作config，注入token
+    // 1 获取token
+    const token = getToken()
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   }, (error)=> {
     return Promise.reject(error)

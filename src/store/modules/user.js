@@ -25,10 +25,31 @@ const userReducer = userStore.reducer;
 // 异步方法封装
 const fetchLogin = (loginForm) => {
   return async (dispatch) => {
-    const res = await request.post('/authorizations', loginForm);
-    dispatch(setToken(res.data.token)); // 使用 setToken 方法
-  };
-};
+    try {
+      const res = await request.post('/authorizations', loginForm)
+      dispatch(setToken(res.data.token))
+    } catch (error) {
+      console.error('请求失败', error);
+      // 处理错误
+    }
+  }
+}
 
-export {setToken, fetchLogin };
+
+//go
+const httpPizhe = (pz, url) => {
+  return async (dispatch) => {
+    try {
+      const res = await request.post(url, pz);
+      // 这里可以选择 dispatch 一个动作，或者返回结果
+      return res.data; // 或者 dispatch 相应的动作
+    } catch (error) {
+      console.error('请求失败', error);
+      // 处理错误
+    }
+  }
+}
+
+
+export {setToken, fetchLogin, httpPizhe };
 export default userReducer;
