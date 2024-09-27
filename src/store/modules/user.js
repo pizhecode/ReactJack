@@ -23,52 +23,16 @@ const {setToken } = userStore.actions;
 const userReducer = userStore.reducer;
 
 // 异步方法封装
-// const fetchLogin = (loginForm) => {
-//   return async (dispatch) => {
-//     try {
-//       const res = await request.post('/authorizations', loginForm)
-//       dispatch(setToken(res.data.token))
-//     } catch (error) {
-//       console.error('请求失败', error);
-//       // 处理错误
-//     }
-//   }
-// }
-
-
-//go
-const fetchLogin = (loginForm,URL) => {
+const fetchLogin = (loginForm) => {
   return async (dispatch) => {
     try {
-      const res = await request.post(URL, loginForm)
-      //MA
-      // dispatch(setToken(res.data.token))
-      //GO
-      dispatch(setToken(res.data))
-      if(res.data != null){
-        return { success: true,msg : res.msg }; // 登录成功返回
-      }else{
-        return { success: false,msg : res.msg  }; // 登录成功返回
-      }
-    } catch (error) {
-      console.error('请求失败', error);
-      return { success: false, msg: error.message}; // 登录成功返回
-    }
-  }
-}
-const httpPizhe = (pz, url) => {
-  return async (dispatch) => {
-    try {
-      const res = await request.post(url, pz);
-      // 这里可以选择 dispatch 一个动作，或者返回结果
-      return res.data; // 或者 dispatch 相应的动作
+      const res = await request.post('/authorizations', loginForm)
+      dispatch(setToken(res.data.token))
     } catch (error) {
       console.error('请求失败', error);
       // 处理错误
     }
   }
 }
-
-
-export {setToken, fetchLogin, httpPizhe };
+export {setToken, fetchLogin};
 export default userReducer;

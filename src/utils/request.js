@@ -3,12 +3,8 @@ import { getToken } from './token'
 //axios的封装处理
 //1 根域名配置
 const request = axios.create({
-  // baseURL: 'http://geek.itheima.net/v1_0',
-  baseURL: 'http://localhost:8084',
+  baseURL: 'http://geek.itheima.net/v1_0',
   timeout: 5000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 })
 
 // 添加请求拦截器

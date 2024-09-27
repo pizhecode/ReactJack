@@ -1,29 +1,24 @@
 import './index.scss'
-import { Card, Form, Input, Button, message } from 'antd'
+import { Card, Form, Input, Button } from 'antd'
 import { useDispatch } from 'react-redux';
 import { fetchLogin } from '@/store/modules/user';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   //go
-  const FormItem1 = 'username';//表单1名字
-  const FormItem2 = 'password';//表单2名字 
+  // const FormItem1 = 'username';//表单1名字
+  // const FormItem2 = 'password';//表单2名字 
 
   //MA
-  // const FormItem1 = 'mobile';//表单1名字 13800000002
-  // const FormItem2 = 'code';//表单2名字   246810
+  const FormItem1 = 'mobile';//表单1名字 13800000002
+  const FormItem2 = 'code';//表单2名字   246810
 
   //点击登录完成
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const onFinish = async loginForm => {
-    const result = await dispatch(fetchLogin(loginForm, '/login'));
-    if (result.success) {
-      message.success(result.msg);
-      navigate('/');
-    } else {
-      message.error(result.msg);
-    }
+    await dispatch(fetchLogin(loginForm, '/login'));
+    navigate('/');
   };
 
   return (
