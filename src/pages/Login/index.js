@@ -8,7 +8,6 @@ const Login = () => {
   //go
   // const FormItem1 = 'username';//表单1名字
   // const FormItem2 = 'password';//表单2名字 
-
   //MA
   const FormItem1 = 'mobile';//表单1名字 13800000002
   const FormItem2 = 'code';//表单2名字   246810
@@ -27,11 +26,11 @@ const Login = () => {
         {/* <img className="login-logo" src={logo} alt="" /> */}
         <div className='loginTitle'>登录</div>
         {/* 登录表单 */}
-        <Form validateTrigger={['onBlur']}  onFinish={onFinish}>
+        <Form validateTrigger={['onBlur']}  onFinish={onFinish}  initialValues={{ mobile: '13800000002', code: '246810' }} >
           {/* 手机号 */}
           {/* , {pattern: /^1[3-9]\d{9}$/,message: '手机号码格式不对'} */}
           <Form.Item name={FormItem1} rules={[{ required: true, message: '请输入手机号' }]}>
-            <Input size="large" placeholder="请输入手机号" />
+            <Input size="large" placeholder="请输入手机号"  />
           </Form.Item>
           {/* 验证码 */}
           <Form.Item name={FormItem2} rules={[ { required: true, message: '请输入验证码' },]}>
