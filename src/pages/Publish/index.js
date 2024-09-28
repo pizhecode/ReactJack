@@ -15,22 +15,18 @@ import { Link } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useEffect, useRef, useState } from 'react'
-import { createArticleAPI, getChannelAPI } from '@/apis/article'
-import { request } from '@/utils'
+import { useRef, useState } from 'react'
+import { createArticleAPI } from '@/apis/article'
+import { useChannel } from '@/hooks/useChannel'
 
 const { Option } = Select
 
 const Publish = () => {
     //获取频道列表
-    const [channelList,setChannelList] = useState([])
-    useEffect(()=>{
-        const getChannelList = async ()=>{
-          const res = await  getChannelAPI()
-          setChannelList(res.data.channels)
-        }
-        getChannelList()
-    },[])
+   
+    //使用 hooks useChannel 获取频道列表
+    const { channelList } = useChannel()
+
     //提交表单  createArticleAPI
     const onFinish = async (formValue) => {
         if (imageType !== imageList.length) return message.warning('图片类型和数量不一致')
@@ -82,7 +78,11 @@ const Publish = () => {
                     <Form.Item label="频道" name="channel_id" rules={[{ required: true, message: '请选择文章频道' }]}>
                         <Select placeholder="请选择文章频道" style={{ width: 400 }}>
                             {/* value属性用户选中之后会自动收集起来作为接口的提交字段 */}
-                            {channelList.map(item =>(<Option key={item.id} value={item.id}>{item.name}</Option>))}
+                            {channelList.map(item => (
+        <Option key={item.id} value={item.id}>
+          {item.name}
+        </Option>
+      ))}
                         </Select>
                     </Form.Item>
 
