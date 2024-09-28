@@ -13,7 +13,7 @@ import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useEffect, useState } from 'react'
-import { getChannelAPI } from '@/apis/article'
+import { createArticleAPI, getChannelAPI } from '@/apis/article'
 
 const { Option } = Select
 
@@ -27,10 +27,19 @@ const Publish = () => {
         }
         getChannelList()
     },[])
+    //提交表单  createArticleAPI
+    const onFinish = (formValue)=>{
+        // console.log(formValue);
+        const {title,content,channel_id} = formValue
+        //处理表单数据
+        const reqData = {title,content,cover:{type:0,image:[]},channel_id}
+        //调用接口
+        createArticleAPI(reqData)
+    }
     return (
         <div className="publish">
             <Card title={<Breadcrumb items={[{ title: <Link to={'/'}>首页</Link> },{ title: '发布文章' },]} /> }>
-                <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} initialValues={{ type: 1 }} >
+                <Form onFinish={onFinish} labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} initialValues={{ type: 1 }} >
                     <Form.Item label="标题" name="title"  rules={[{ required: true, message: '请输入文章标题' }]}>
                         <Input placeholder="请输入文章标题" style={{ width: 400 }} />
                     </Form.Item>
