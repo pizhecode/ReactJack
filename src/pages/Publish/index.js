@@ -7,15 +7,17 @@ import {
     Input,
     Upload,
     Space,
-    Select
+    Select,
+    message
   } from 'antd'
   import { PlusOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createArticleAPI, getChannelAPI } from '@/apis/article'
+import { request } from '@/utils'
 
 const { Option } = Select
 
@@ -30,26 +32,43 @@ const Publish = () => {
         getChannelList()
     },[])
     //提交表单  createArticleAPI
-    const onFinish = (formValue)=>{
-        // console.log(formValue);
-        const {title,content,channel_id} = formValue
-        //处理表单数据
-        const reqData = {title,content,cover:{type:0,image:[]},channel_id}
-        //调用接口
+    const onFinish = async (formValue) => {
+        if (imageType !== imageList.length) return message.warning('图片类型和数量不一致')
+        const { channel_id, content, title } = formValue
+        const reqData = {
+          channel_id,
+          content,
+          title,
+          type: imageType,
+          cover: {
+            type: imageType,
+            images: imageList.map(item => item.response.data.url)
+          }
+        }
         createArticleAPI(reqData)
-    }
+        message.success('发布文章成功')
+      }
     //上传回调
+    const cacheImageList = useRef([])
     const [imageList,setImageList] = useState([])
     const onChange = (value)=>{
         // console.log(value);
         setImageList(value.fileList)
-        
+        cacheImageList.current = value.fileList
     }
     //切换图片封面类型
     const [imageType, setImageType] = useState(0)
     const onTypeChange = (value) => {
-    //   console.log(value)
-      setImageType(value.target.value)
+        const type = value.target.value
+        setImageType(type)
+        if (type === 1) {
+          // 单图，截取第一张展示
+          const imgList = cacheImageList.current[0] ? [cacheImageList.current[0]] : []
+          setImageList(imgList)
+        } else if (type === 3) {
+          // 三图，取所有图片展示
+          setImageList(cacheImageList.current)
+        }
     }
     return (
         <div className="publish">
@@ -71,7 +90,7 @@ const Publish = () => {
                         <Form.Item name="type">
                             <Radio.Group onChange={onTypeChange}><Radio value={1}>单图</Radio><Radio value={3}>三图</Radio><Radio value={0}>无图</Radio></Radio.Group>
                         </Form.Item>
-                        {imageType > 0 && <Upload onChange={onChange} action={'http://geek.itheima.net/v1_0/upload'} name='image' listType="picture-card" showUploadList><div style={{ marginTop: 8 }}><PlusOutlined /></div></Upload>}         
+                        {imageType > 0 && <Upload maxCount={imageType} multiple={imageType > 1} onChange={onChange} fileList={imageList} action={'http://geek.itheima.net/v1_0/upload'} name='image' listType="picture-card" showUploadList><div style={{ marginTop: 8 }}><PlusOutlined /></div></Upload>}         
                     </Form.Item>
 
                     <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入文章内容' }]}>
