@@ -104,6 +104,15 @@ const Article = () => {
         // 2. 使用参数获取新的列表
         //reqData 参数发生变化，list自动重新执行
       }
+      //分页
+      const onPageChannge = (page)=>{
+        console.log(page);
+        // 修改参数依赖项 引发数据渲染
+        setReqData({
+          ...reqData,
+          page
+        })
+      }
   return (
     <div>
       <Card
@@ -147,7 +156,9 @@ const Article = () => {
         </Form>
         {/* 列表 */}
         <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
-             <Table rowKey="id" columns={columns} dataSource={list} />
+             <Table rowKey="id" columns={columns} dataSource={list} pagination={{
+              total:count,pageSize:reqData.per_page,onChange:onPageChannge
+             }} />
         </Card>
       </Card>
     </div>
