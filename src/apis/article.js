@@ -45,3 +45,12 @@ export function getArticleByID(id){
         method:'GET',
     })
 }
+
+//更新文章  mp/articles/{target} 
+export function updateArticleAPI(data){
+    return request({
+        url:`/mp/articles/${data.id}?draft=false`,
+        method:'PUT',
+        data
+    })
+}

@@ -16,7 +16,7 @@ import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useEffect, useRef, useState } from 'react'
-import { createArticleAPI, getArticleByID } from '@/apis/article'
+import { createArticleAPI, getArticleByID, updateArticleAPI } from '@/apis/article'
 import { useChannel } from '@/hooks/useChannel'
 import { type } from '@testing-library/user-event/dist/type'
 
@@ -39,11 +39,23 @@ const Publish = () => {
           type: imageType,
           cover: {
             type: imageType,
-            images: imageList.map(item => item.response.data.url)
+            images: imageList.map(item =>{
+                if(item.response){
+                   return item.response.data.url
+                }else{
+                    return item.url
+                }
+            })
           }
         }
-        createArticleAPI(reqData)
-        message.success('发布文章成功')
+        //调用不同接口
+        if(articleID){
+            //更新
+            updateArticleAPI({...reqData,id:articleID})
+        }else{
+             createArticleAPI(reqData)
+        }
+        message.success(articleID ? '编辑文章成功' : '发布文章成功');
       }
     //上传回调
     const cacheImageList = useRef([])
@@ -120,7 +132,7 @@ const Publish = () => {
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 4 }}>
                         <Space>
-                            <Button size="large" type="primary" htmlType="submit">发布文章 </Button>
+                            <Button size="large" type="primary" htmlType="submit">{articleID ? '编辑文章' : '发布文章'}</Button>
                         </Space>
                     </Form.Item>
                 </Form>
