@@ -11,13 +11,14 @@ import {
     message
   } from 'antd'
   import { PlusOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useRef, useState } from 'react'
-import { createArticleAPI } from '@/apis/article'
+import { useEffect, useRef, useState } from 'react'
+import { createArticleAPI, getArticleByID } from '@/apis/article'
 import { useChannel } from '@/hooks/useChannel'
+import { type } from '@testing-library/user-event/dist/type'
 
 const { Option } = Select
 
@@ -66,10 +67,36 @@ const Publish = () => {
           setImageList(cacheImageList.current)
         }
     }
+    // 回填数据
+    const [searchParams] = useSearchParams()
+    const articleID = searchParams.get('id')
+    //获取实例
+    const [form] = Form.useForm()
+        // console.log(articleID);
+    useEffect(()=>{
+        //1 通过id获取数据
+        async function getArticleDetail(){
+           const res = await getArticleByID(articleID)
+           const data = res.data
+           const {cover} = data
+           form.setFieldsValue({
+            ...data,
+            type:cover.type
+           })
+           //回填图片列表
+           setImageType(cover.type)
+           //显示图片({})
+           setImageList(cover.images.map(url=>{
+            return {url}
+           }))
+        }
+        getArticleDetail() 
+        //2 通过实例方法 完成回填
+    },[articleID,form])
     return (
         <div className="publish">
             <Card title={<Breadcrumb items={[{ title: <Link to={'/'}>首页</Link> },{ title: '发布文章' },]} /> }>
-                <Form onFinish={onFinish} labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} initialValues={{ type: 0 }} >
+                <Form form={form} onFinish={onFinish} labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} initialValues={{ type: 0 }} >
 
                     <Form.Item label="标题" name="title"  rules={[{ required: true, message: '请输入文章标题' }]}>
                         <Input placeholder="请输入文章标题" style={{ width: 400 }} />
