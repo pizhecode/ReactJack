@@ -31,32 +31,12 @@ const Article = () => {
             return <img src={cover.images[0] || img404} width={80} height={60} alt="" />
           }
         },
-        {
-          title: '标题',
-          dataIndex: 'title',
-          width: 220
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
-          render: data => status[data]
-        },
-        {
-          title: '发布时间',
-          dataIndex: 'pubdate'
-        },
-        {
-          title: '阅读数',
-          dataIndex: 'read_count'
-        },
-        {
-          title: '评论数',
-          dataIndex: 'comment_count'
-        },
-        {
-          title: '点赞数',
-          dataIndex: 'like_count'
-        },
+        {title: '标题', dataIndex: 'title', width: 220},
+        {title: '状态',dataIndex: 'status',render: data => status[data]},
+        {title: '发布时间',dataIndex: 'pubdate'},
+        { title: '阅读数',dataIndex: 'read_count'},
+        {title: '评论数',dataIndex: 'comment_count'},
+        {title: '点赞数',dataIndex: 'like_count'},
         {
           title: '操作',
           render: data => {
@@ -89,18 +69,41 @@ const Article = () => {
           title: 'wkwebview离线化加载h5资源解决方案'
         }
       ]
-
+      //筛选功能
+      //1 准备参数
+      const [reqData,setReqData] = useState({
+        status:'',
+        channel_id:'',
+        begin_pubdate:'',
+        end_pubdate:'',
+        page:1,
+        per_page:4
+      })
       //获取文章列表
       const [list,setList] =  useState([])
       const [count,setCount] = useState(0)
       useEffect(()=>{
         async function getList() {
-            const res = await getArticleAPI()
+            const res = await getArticleAPI(reqData)
             setList(res.data.results)
             setCount(res.data.total_count)
         }
         getList()
-      },[])
+      },[reqData])
+      //2 获取当前筛选数据
+      const onFinish = (formValue)=>{
+        console.log(formValue);
+        //把表单收集到的数据放到参数中
+        setReqData({
+          ...reqData,
+          channel_id:formValue.channel_id,
+          status:formValue.status,
+          begin_pubdate:formValue.date[0].format('YYYY-MM-DD'),
+          end_pubdate:formValue.date[1].format('YYYY-MM-DD')
+        })
+        // 2. 使用参数获取新的列表
+        //reqData 参数发生变化，list自动重新执行
+      }
   return (
     <div>
       <Card
@@ -112,7 +115,7 @@ const Article = () => {
         }
         style={{ marginBottom: 20 }}
       >
-        <Form initialValues={{ status: '' }}>
+        <Form initialValues={{ status: '' }} onFinish={onFinish}>
           <Form.Item label="状态" name="status">
             <Radio.Group>
               <Radio value={''}>全部</Radio>
@@ -124,7 +127,7 @@ const Article = () => {
           <Form.Item label="频道" name="channel_id">
             <Select
               placeholder="请选择文章频道"
-              defaultValue="皮喆"
+              defaultValue=""
               style={{ width: 120 }}
             >
              {channelList.map(item=> <Option value={item.id} key={item.id}>{item.name}</Option>)}
