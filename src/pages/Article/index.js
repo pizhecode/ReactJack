@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Card, Breadcrumb, Form, Button, Radio, DatePicker, Select } from 'antd'
+import { Card, Breadcrumb, Form, Button, Radio, DatePicker, Select, Popconfirm } from 'antd'
 //汉化包
 import locale from 'antd/es/date-picker/locale/zh_CN'
 
@@ -9,7 +9,7 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import img404 from '@/assets/error.png'
 import { useChannel } from '@/hooks/useChannel'
 import { useEffect, useState } from 'react'
-import { getArticleAPI } from '@/apis/article'
+import { delArticleAPI, getArticleAPI } from '@/apis/article'
 import { render } from '@testing-library/react'
 
 const { Option } = Select
@@ -43,12 +43,19 @@ const Article = () => {
             return (
               <Space size="middle">
                 <Button type="primary" shape="circle" icon={<EditOutlined />} />
-                <Button
-                  type="primary"
-                  danger
-                  shape="circle"
-                  icon={<DeleteOutlined />}
-                />
+                <Popconfirm
+              title="确认删除该条文章吗?"
+              onConfirm={() => delArticle(data)}
+              okText="确认"
+              cancelText="取消"
+            >
+              <Button
+                type="primary"
+                danger
+                shape="circle"
+                icon={<DeleteOutlined />}
+              />
+            </Popconfirm>
               </Space>
             )
           }
@@ -106,11 +113,20 @@ const Article = () => {
       }
       //分页
       const onPageChannge = (page)=>{
-        console.log(page);
+        // console.log(page);
         // 修改参数依赖项 引发数据渲染
         setReqData({
           ...reqData,
           page
+        })
+      }
+      //删除
+      const delArticle = async (data)=>{
+        // console.log(data.id);
+        await delArticleAPI(data.id)
+        //重新渲染list
+        setReqData({
+          ...reqData
         })
       }
   return (
